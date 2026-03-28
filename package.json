@@ -6,13 +6,15 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "ingest": "node src/cli.js"
+    "ingest": "node src/cli.js",
+    "postinstall": "node scripts/copy-vendor.js"
   },
   "engines": {
     "node": ">=20.0.0"
   },
   "dependencies": {
     "@qdrant/js-client-rest": "^1.12.0",
+    "3d-force-graph": "^1.79.0",
     "better-sqlite3": "^11.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -21,6 +23,7 @@
     "formdata-node": "^6.0.3",
     "node-fetch": "^3.3.2",
     "pg": "^8.20.0",
+    "three": "^0.168.0",
     "uuid": "^9.0.0"
   },
   "author": "Steve Winfield / WinTech Partners",
