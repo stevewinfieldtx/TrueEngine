@@ -79,6 +79,7 @@ app.get('/sources/:collectionId', authMiddleware, (req, res) => { res.json(engin
 app.get('/intelligence/:collectionId', authMiddleware, (req, res) => { const { type } = req.query; res.json(engine.getIntelligence(req.params.collectionId, type || null)); });
 app.get('/stats/:collectionId', authMiddleware, (req, res) => { res.json(engine.getStats(req.params.collectionId)); });
 
+// ─── Admin Dashboard ──────────────────────────────────────────────────────
 app.get('/admin', (req, res) => { res.type('html').send(getAdminHTML()); });
 
 app.listen(config.PORT, '0.0.0.0', () => { console.log(`\n${'='.repeat(60)}`); console.log(`  TrueEngine API Server`); console.log(`  Port: ${config.PORT}`); console.log(`  OpenRouter: ${config.OPENROUTER_API_KEY ? 'YES' : 'NO'}`); console.log(`  YouTube API: ${config.YOUTUBE_API_KEY ? 'YES' : 'NO'}`); console.log(`  Groq: ${config.GROQ_API_KEY ? 'YES' : 'NO'}`); console.log(`  Templates: ${Object.keys(config.TEMPLATES).join(', ')}`); console.log(`${'='.repeat(60)}\n`); });
