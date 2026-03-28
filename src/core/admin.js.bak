@@ -1,0 +1,19 @@
+/**
+ * TrueEngine — Admin Dashboard
+ * ===============================
+ * Returns the self-contained HTML admin dashboard.
+ * Served at GET /admin on the TrueEngine API server.
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+function getAdminHTML() {
+  const htmlPath = path.join(__dirname, '..', 'public', 'admin.html');
+  if (fs.existsSync(htmlPath)) {
+    return fs.readFileSync(htmlPath, 'utf-8');
+  }
+  return '<html><body><h1>Admin dashboard not found</h1><p>Expected at src/public/admin.html</p></body></html>';
+}
+
+module.exports = { getAdminHTML };
