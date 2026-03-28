@@ -23,9 +23,9 @@ function authMiddleware(req, res, next) {
 
 app.get('/health', (req, res) => { res.json({ status: 'ok', engine: 'TrueEngine', version: '1.1.0', templates: Object.keys(config.TEMPLATES), hasOpenRouter: !!config.OPENROUTER_API_KEY, hasYouTubeAPI: !!config.YOUTUBE_API_KEY, hasGroq: !!config.GROQ_API_KEY, vectorStore: engine.store.qdrantReady ? 'qdrant' : 'sqlite', qdrantConnected: engine.store.qdrantReady }); });
 
-app.post('/collections', authMiddleware, (req, res) => { try { const { id, templateId, name, description, metadata } = req.body; if (!id) return res.status(400).json({ error: 'id is required' }); const col = engine.createCollection(id, templateId, name, description); res.json({ ok: true, collection: col }); } catch (err) { res.status(500).json({ error: err.message }); } });
-app.get('/collections', authMiddleware, (req, res) => { res.json(engine.listCollections()); });
-app.get('/collections/:id', authMiddleware, (req, res) => { const col = engine.getCollection(req.params.id); if (!col) return res.status(404).json({ error: 'Collection not found' }); const stats = engine.getStats(req.params.id); res.json({ ...col, stats }); });
+app.post('/collections', authMiddleware, async (req, res) => { try { const { id, templateId, name, description, metadata } = req.body; if (!id) return res.status(400).json({ error: 'id is required' }); const col = await engine.createCollection(id, templateId, name, description); res.json({ ok: true, collection: col }); } catch (err) { res.status(500).json({ error: err.message }); } });
+app.get('/collections', authMiddleware, async (req, res) => { try { res.json(await engine.listCollections()); } catch(e) { res.status(500).json({error:e.message}); } });
+app.get('/collections/:id', authMiddleware, async (req, res) => { try { const col = await engine.getCollection(req.params.id); if (!col) return res.status(404).json({ error: 'Collection not found' }); const stats = await engine.getStats(req.params.id); res.json({ ...col, stats }); } catch(e) { res.status(500).json({error:e.message}); } });
 
 app.post('/ingest/youtube', authMiddleware, async (req, res) => { try { const { collectionId, videoUrl } = req.body; if (!collectionId || !videoUrl) return res.status(400).json({ error: 'collectionId and videoUrl required' }); const result = await engine.ingestYouTubeVideo(collectionId, videoUrl); res.json({ ok: true, source: result }); } catch (err) { res.status(500).json({ error: err.message }); } });
 
@@ -45,11 +45,11 @@ app.get('/dashboard/:collectionId', async (req, res) => {
 // Dashboard JSON - raw intelligence data for custom frontends
 app.get('/dashboard/:collectionId/json', authMiddleware, async (req, res) => {
   try {
-    const col = engine.getCollection(req.params.collectionId);
+    const col = await engine.getCollection(req.params.collectionId);
     if (!col) return res.status(404).json({ error: 'Collection not found' });
-    const mergedIntel = engine.getIntelligence(req.params.collectionId, 'merged_extractors');
-    const engagementIntel = engine.getIntelligence(req.params.collectionId, 'engagement_analytics');
-    const sources = engine.store.getSources(req.params.collectionId);
+    const mergedIntel = await engine.getIntelligence(req.params.collectionId, 'merged_extractors');
+    const engagementIntel = await engine.getIntelligence(req.params.collectionId, 'engagement_analytics');
+    const sources = await engine.store.getSources(req.params.collectionId);
     res.json({ collection: col, intelligence: mergedIntel?.data || {}, engagement: engagementIntel?.data || {}, sources: sources.map(s => ({ id: s.id, title: s.title, status: s.status })) });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -75,9 +75,9 @@ app.get('/admin/vector-status', authMiddleware, async (req, res) => {
   });
 });
 
-app.get('/sources/:collectionId', authMiddleware, (req, res) => { res.json(engine.store.getSources(req.params.collectionId)); });
-app.get('/intelligence/:collectionId', authMiddleware, (req, res) => { const { type } = req.query; res.json(engine.getIntelligence(req.params.collectionId, type || null)); });
-app.get('/stats/:collectionId', authMiddleware, (req, res) => { res.json(engine.getStats(req.params.collectionId)); });
+app.get('/sources/:collectionId', authMiddleware, async (req, res) => { try { res.json(await engine.store.getSources(req.params.collectionId)); } catch(e) { res.status(500).json({error:e.message}); } });
+app.get('/intelligence/:collectionId', authMiddleware, async (req, res) => { try { const { type } = req.query; res.json(await engine.getIntelligence(req.params.collectionId, type || null)); } catch(e) { res.status(500).json({error:e.message}); } });
+app.get('/stats/:collectionId', authMiddleware, async (req, res) => { try { res.json(await engine.getStats(req.params.collectionId)); } catch(e) { res.status(500).json({error:e.message}); } });
 
 // ─── Admin Dashboard ──────────────────────────────────────────────────────
 app.get('/admin', (req, res) => { res.type('html').send(getAdminHTML()); });

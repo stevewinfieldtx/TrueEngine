@@ -43,6 +43,9 @@ module.exports = {
   TRUEWRITING_API_URL: process.env.TRUEWRITING_API_URL || 'http://localhost:8200',
   TRUEGRAPH_API_URL:   process.env.TRUEGRAPH_API_URL   || 'http://localhost:8300',
 
+  // PostgreSQL (persistent metadata)
+  DATABASE_URL: process.env.DATABASE_URL || '',
+
   // Qdrant (vector search)
   QDRANT_URL: process.env.QDRANT_URL || '',
   QDRANT_API_KEY: process.env.QDRANT_API_KEY || '',

@@ -360,8 +360,8 @@ class TrueEngine {
     return { answer: answer || 'Error generating response.', sources: results.slice(0, 3).map(r => ({ timestamp: r.timestamp, text: r.text.slice(0, 200), similarity: r.similarity })) };
   }
 
-  getStats(collectionId) { return this.store.getStats(collectionId); }
-  getIntelligence(collectionId, type) { return this.store.getIntelligence(collectionId, type); }
+  async getStats(collectionId) { return await this.store.getStats(collectionId); }
+  async getIntelligence(collectionId, type) { return await this.store.getIntelligence(collectionId, type); }
 }
 
 function formatTime(seconds) { if (!seconds) return '0:00'; const m = Math.floor(seconds / 60); const s = Math.floor(seconds % 60); return `${m}:${String(s).padStart(2, '0')}`; }
