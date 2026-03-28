@@ -28,14 +28,17 @@ class Store {
     this.qdrant = null;
     this.qdrantReady = false;
     this.pgReady = false;
+    this._pgInitPromise = null;
 
     if (config.DATABASE_URL && Pool) {
       this.pg = new Pool({
         connectionString: config.DATABASE_URL,
         ssl: config.DATABASE_URL.includes('railway.internal') ? false : { rejectUnauthorized: false },
         max: 10,
+        connectionTimeoutMillis: 10000,
+        idleTimeoutMillis: 30000,
       });
-      this._initPostgres();
+      this._pgInitPromise = this._initPostgres().catch(err => console.error('  PG init error:', err.message));
     } else if (Database) {
       this.db = new Database(path.join(this.dataDir, 'trueengine.db'));
       this.db.pragma('journal_mode = WAL');
@@ -104,6 +107,7 @@ class Store {
     }
   }
 
+  async _waitReady() { if (this._pgInitPromise) await this._pgInitPromise; }
   _usePg() { return this.pgReady && this.pg; }
 
   // ─── Qdrant Init ─────────────────────────────────────────────────
@@ -144,6 +148,7 @@ class Store {
   // ─── Collections ─────────────────────────────────────────────────
 
   async createCollection(id, name, templateId = 'default', description = '', metadata = {}) {
+    await this._waitReady();
     if (this._usePg()) {
       await this.pg.query(
         `INSERT INTO collections (id, name, template_id, description, metadata) VALUES ($1,$2,$3,$4,$5)
@@ -159,6 +164,7 @@ class Store {
   }
 
   async getCollection(id) {
+    await this._waitReady();
     if (this._usePg()) {
       const r = await this.pg.query('SELECT * FROM collections WHERE id=$1', [id]);
       if (!r.rows[0]) return null;
@@ -172,6 +178,7 @@ class Store {
   }
 
   async listCollections() {
+    await this._waitReady();
     if (this._usePg()) {
       const r = await this.pg.query('SELECT * FROM collections ORDER BY created_at DESC');
       return r.rows.map(row => ({ ...row, metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata }));
@@ -184,6 +191,7 @@ class Store {
   // ─── Sources ─────────────────────────────────────────────────────
 
   async addSource(collectionId, source) {
+    await this._waitReady();
     const meta = JSON.stringify(source.metadata || {});
     if (this._usePg()) {
       await this.pg.query(
@@ -214,6 +222,7 @@ class Store {
   }
 
   async getSources(collectionId) {
+    await this._waitReady();
     if (this._usePg()) {
       const r = await this.pg.query('SELECT * FROM sources WHERE collection_id=$1 ORDER BY published_at DESC', [collectionId]);
       return r.rows.map(row => ({ ...row, metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata }));
@@ -226,6 +235,7 @@ class Store {
   // ─── Chunks ──────────────────────────────────────────────────────
 
   async storeChunks(collectionId, sourceId, chunks) {
+    await this._waitReady();
     if (this._usePg()) {
       const client = await this.pg.connect();
       try {
@@ -252,6 +262,7 @@ class Store {
   }
 
   async getChunks(collectionId, sourceId = null) {
+    await this._waitReady();
     if (this._usePg()) {
       let r;
       if (sourceId) { r = await this.pg.query('SELECT * FROM chunks WHERE collection_id=$1 AND source_id=$2 ORDER BY chunk_index', [collectionId, sourceId]); }
@@ -365,6 +376,7 @@ class Store {
   // ─── Stats ───────────────────────────────────────────────────────
 
   async getStats(collectionId) {
+    await this._waitReady();
     if (this._usePg()) {
       const sc = await this.pg.query('SELECT COUNT(*) as n FROM sources WHERE collection_id=$1', [collectionId]);
       const cc = await this.pg.query('SELECT COUNT(*) as n FROM chunks WHERE collection_id=$1', [collectionId]);

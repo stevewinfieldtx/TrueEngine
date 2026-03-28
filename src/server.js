@@ -2,6 +2,7 @@
  * TrueEngine - REST API Server
  * Deploy on Railway. All endpoints return JSON.
  */
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const config = require('./config');
@@ -12,6 +13,10 @@ const { getAdminHTML } = require('./core/admin');
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+
+// Serve static files (hero page, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
+
 const engine = new TrueEngine();
 
 function authMiddleware(req, res, next) {

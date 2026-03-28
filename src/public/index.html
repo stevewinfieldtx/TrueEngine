@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrueEngine — See How Your Ministry Connects</title>
+  <meta name="description" content="TrueEngine powers the living network behind churches, influencers, and faith leaders.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{--gold:#d4a853;--gold-bright:#f0c95c;--cream:#f5efe0;--deep:#0a0a12;--glow-gold:rgba(212,168,83,0.35)}
+    body{background:var(--deep);font-family:'Outfit',sans-serif;color:var(--cream);overflow:hidden;width:100vw;height:100vh}
+    #gc{position:fixed;inset:0;z-index:1}
+    #vig{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 35%,rgba(6,6,14,.55) 70%,rgba(6,6,14,.92) 100%)}
+    #brand{position:fixed;inset:0;z-index:3;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:40px 48px}
+    .tb{display:flex;justify-content:space-between;align-items:flex-start}
+    .lm{display:flex;align-items:center;gap:14px}
+    .li{width:38px;height:38px;border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px var(--glow-gold);animation:pg 4s ease-in-out infinite}
+    .li svg{width:18px;height:18px;fill:var(--gold)}
+    .lt{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.6rem;letter-spacing:.12em;color:var(--cream);text-transform:uppercase}
+    .lt span{font-weight:600;color:var(--gold)}
+    .nh{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,239,224,.35);font-weight:300;padding-top:8px}
+    .hc{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:3;pointer-events:none;max-width:680px;padding:0 24px}
+    .ht{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(2.2rem,5vw,3.8rem);line-height:1.2;color:var(--cream);text-shadow:0 0 60px rgba(212,168,83,.2);opacity:0;animation:fu 2s ease-out 1.2s forwards}
+    .ht em{font-style:normal;color:var(--gold);font-weight:600}
+    .hs{margin-top:20px;font-weight:200;font-size:clamp(.9rem,1.8vw,1.15rem);color:rgba(245,239,224,.55);letter-spacing:.04em;line-height:1.6;opacity:0;animation:fu 2s ease-out 1.8s forwards}
+    .cr{margin-top:36px;display:flex;gap:16px;justify-content:center;opacity:0;animation:fu 2s ease-out 2.4s forwards;pointer-events:auto}
+    .cp{pointer-events:auto;padding:14px 36px;background:linear-gradient(135deg,var(--gold),#b8902e);color:var(--deep);font-family:'Outfit',sans-serif;font-weight:500;font-size:.88rem;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:60px;cursor:pointer;transition:all .3s;text-decoration:none;box-shadow:0 0 30px var(--glow-gold)}
+    .cp:hover{transform:translateY(-2px);box-shadow:0 0 50px var(--glow-gold),0 8px 32px rgba(0,0,0,.4)}
+    .cg{pointer-events:auto;padding:14px 36px;background:0 0;color:var(--cream);font-weight:300;font-size:.88rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(245,239,224,.2);border-radius:60px;cursor:pointer;transition:all .3s;text-decoration:none}
+    .cg:hover{border-color:var(--gold);color:var(--gold)}
+    .bb{display:flex;justify-content:space-between;align-items:flex-end}
+    .sr{display:flex;gap:48px;opacity:0;animation:fu 1.5s ease-out 3s forwards}
+    .sn{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:var(--gold);line-height:1}
+    .sl{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(245,239,224,.35);font-weight:300;margin-top:4px}
+    .pb{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,239,224,.2);font-weight:200;opacity:0;animation:fu 1.5s ease-out 3.5s forwards}
+    #ip{position:fixed;top:20px;right:20px;background:rgba(10,10,18,.92);backdrop-filter:blur(20px);border:1px solid rgba(212,168,83,.15);padding:24px;border-radius:16px;max-width:340px;max-height:70vh;overflow-y:auto;z-index:10;display:none;box-shadow:0 0 40px rgba(212,168,83,.12),0 20px 60px rgba(0,0,0,.5);pointer-events:auto}
+    #ip h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.3rem;color:var(--gold);margin-bottom:10px}
+    .tb2{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:14px}
+    .ts{background:rgba(168,50,72,.3);color:#e8758c}.tt{background:rgba(42,31,94,.5);color:#9b8fd4}
+    .tv{background:rgba(212,168,83,.2);color:var(--gold-bright)}.tp{background:rgba(138,146,168,.2);color:#8a92a8}
+    .ti{background:rgba(50,168,120,.2);color:#60dba0}
+    #ip p{font-size:.85rem;color:rgba(245,239,224,.7);line-height:1.5;margin-bottom:8px}
+    #ip a{color:var(--gold);text-decoration:none}#ip a:hover{color:var(--gold-bright);text-decoration:underline}
+    #ip ul{list-style:none;padding:0;margin:8px 0}
+    #ip ul li{padding:6px 0;border-bottom:1px solid rgba(245,239,224,.06);font-size:.82rem}
+    #ip ul li:last-child{border:none}
+    .cb{position:absolute;top:12px;right:14px;background:0 0;border:none;color:rgba(245,239,224,.4);font-size:1.1rem;cursor:pointer}
+    .cb:hover{color:var(--cream)}
+    .wl{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(212,168,83,.12);border:1px solid rgba(212,168,83,.25);border-radius:8px;margin-top:8px;font-size:.82rem;transition:all .2s}
+    .wl:hover{background:rgba(212,168,83,.22);border-color:var(--gold);text-decoration:none!important}
+    .xl{margin-top:16px;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(245,239,224,.4)}
+    @keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pg{0%,100%{box-shadow:0 0 20px var(--glow-gold)}50%{box-shadow:0 0 35px rgba(212,168,83,.5)}}
+    @media(max-width:768px){#brand{padding:24px 20px}.sr{gap:24px}.sn{font-size:1.4rem}.cr{flex-direction:column;align-items:center}#ip{right:10px;left:10px;max-width:none}.nh{display:none}}
+  </style>
+</head>
+<body>
+<div id="gc"></div>
+<div id="vig"></div>
+<div id="brand">
+  <div class="tb">
+    <div class="lm">
+      <div class="li"><svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg></div>
+      <div class="lt"><span>True</span>Engine</div>
+    </div>
+    <div class="nh">Explore the network &rarr;</div>
+  </div>
+  <div class="bb">
+    <div class="sr">
+      <div><div class="sn">2,400+</div><div class="sl">Sermons Connected</div></div>
+      <div><div class="sn">180</div><div class="sl">Faith Leaders</div></div>
+      <div><div class="sn">&infin;</div><div class="sl">Connections Found</div></div>
+    </div>
+    <div class="pb">Powered by TrueEngine &times; WinTech Partners</div>
+  </div>
+</div>
+<div class="hc">
+  <div class="ht">See how your <em>ministry</em> connects</div>
+  <div class="hs">Every sermon, every verse, every theme &mdash; alive in a single living network.<br>TrueEngine maps the invisible threads of your message.</div>
+  <div class="cr"><a href="#" class="cp">Request Early Access</a><a href="#" class="cg">Watch It Live</a></div>
+</div>
+<div id="ip"><button class="cb" onclick="document.getElementById('ip').style.display='none'">&times;</button><div id="ic"></div></div>
+
+<script>
+(function(){
+  function ls(u){return new Promise(function(ok,no){var s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+
+  ls('https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js').then(function(){
+    return ls('https://cdn.jsdelivr.net/npm/3d-force-graph@1.79.0/dist/3d-force-graph.min.js');
+  }).then(go).catch(function(e){
+    document.getElementById('gc').innerHTML='<div style="color:#d4a853;text-align:center;padding-top:40vh;font-size:1.2rem">Loading 3D engine&hellip; please refresh.</div>';
+  });
+
+  function go(){
+    var K={p:'#8a92a8',s:'#a83248',t:'#5a3f9e',v:'#d4a853',i:'#32a878'};
+    var D={nodes:[
+      {id:"PR",name:"Pastor Reyes",type:"preacher",color:K.p,val:7},{id:"PH",name:"Pastor Hale",type:"preacher",color:K.p,val:6},
+      {id:"PM",name:"Pastor Mitchell",type:"preacher",color:K.p,val:5},{id:"RJ",name:"Rev. Johnson",type:"preacher",color:K.p,val:5},
+      {id:"GD",name:"@GraceDaily",type:"influencer",color:K.i,val:8},{id:"FW",name:"@FaithWalks",type:"influencer",color:K.i,val:6},
+      {id:"S1",name:"The Unfailing Love That Finds You",type:"sermon",preacher:"Pastor Reyes",date:"2025-03-09",url:"#",color:K.s,val:4},
+      {id:"S2",name:"Grace in the Storm",type:"sermon",preacher:"Pastor Hale",date:"2025-03-16",url:"#",color:K.s,val:4},
+      {id:"S3",name:"Faith That Moves Mountains",type:"sermon",preacher:"Pastor Reyes",date:"2025-03-23",url:"#",color:K.s,val:4},
+      {id:"S4",name:"When God Feels Silent",type:"sermon",preacher:"Pastor Mitchell",date:"2025-03-30",url:"#",color:K.s,val:4},
+      {id:"S5",name:"The Armor You Already Wear",type:"sermon",preacher:"Rev. Johnson",date:"2025-04-06",url:"#",color:K.s,val:4},
+      {id:"S6",name:"Rebuilding from Ashes",type:"sermon",preacher:"Pastor Hale",date:"2025-04-13",url:"#",color:K.s,val:4},
+      {id:"S7",name:"The Table He Prepares",type:"sermon",preacher:"Pastor Reyes",date:"2025-04-20",url:"#",color:K.s,val:4},
+      {id:"S8",name:"Seeds in Hard Ground",type:"sermon",preacher:"Pastor Mitchell",date:"2025-04-27",url:"#",color:K.s,val:4},
+      {id:"S9",name:"Rest Is Not Retreat",type:"sermon",preacher:"Rev. Johnson",date:"2025-05-04",url:"#",color:K.s,val:4},
+      {id:"S10",name:"The God Who Runs Toward You",type:"sermon",preacher:"Pastor Reyes",date:"2025-05-11",url:"#",color:K.s,val:4},
+      {id:"Grace",name:"Grace",type:"theme",color:K.t,val:14},{id:"Faith",name:"Faith",type:"theme",color:K.t,val:12},
+      {id:"Suffering",name:"Suffering",type:"theme",color:K.t,val:10},{id:"Restoration",name:"Restoration",type:"theme",color:K.t,val:11},
+      {id:"Provision",name:"Provision",type:"theme",color:K.t,val:9},{id:"Identity",name:"Identity in Christ",type:"theme",color:K.t,val:10},
+      {id:"Rest",name:"Rest & Sabbath",type:"theme",color:K.t,val:8},
+      {id:"J316",name:"John 3:16",type:"verse",color:K.v,val:11},{id:"R58",name:"Romans 5:8",type:"verse",color:K.v,val:9},
+      {id:"H111",name:"Hebrews 11:1",type:"verse",color:K.v,val:8},{id:"P235",name:"Psalm 23:5",type:"verse",color:K.v,val:8},
+      {id:"I613",name:"Isaiah 61:3",type:"verse",color:K.v,val:7},{id:"E611",name:"Ephesians 6:11",type:"verse",color:K.v,val:7},
+      {id:"M1128",name:"Matthew 11:28",type:"verse",color:K.v,val:8},{id:"J2911",name:"Jeremiah 29:11",type:"verse",color:K.v,val:9},
+      {id:"C129",name:"2 Corinthians 12:9",type:"verse",color:K.v,val:7}
+    ],links:[
+      {source:"PR",target:"S1"},{source:"PH",target:"S2"},{source:"PR",target:"S3"},{source:"PM",target:"S4"},
+      {source:"RJ",target:"S5"},{source:"PH",target:"S6"},{source:"PR",target:"S7"},{source:"PM",target:"S8"},
+      {source:"RJ",target:"S9"},{source:"PR",target:"S10"},
+      {source:"GD",target:"Grace"},{source:"GD",target:"Restoration"},{source:"FW",target:"Faith"},{source:"FW",target:"Identity"},
+      {source:"S1",target:"Grace"},{source:"S2",target:"Grace"},{source:"S2",target:"Suffering"},
+      {source:"S3",target:"Faith"},{source:"S4",target:"Suffering"},{source:"S5",target:"Identity"},
+      {source:"S6",target:"Restoration"},{source:"S7",target:"Provision"},
+      {source:"S8",target:"Faith"},{source:"S8",target:"Suffering"},
+      {source:"S9",target:"Rest"},{source:"S10",target:"Grace"},{source:"S10",target:"Restoration"},
+      {source:"S1",target:"J316"},{source:"S1",target:"R58"},{source:"S2",target:"C129"},{source:"S2",target:"J316"},
+      {source:"S3",target:"H111"},{source:"S3",target:"J2911"},{source:"S4",target:"P235"},{source:"S5",target:"E611"},
+      {source:"S6",target:"I613"},{source:"S6",target:"J2911"},{source:"S7",target:"P235"},{source:"S8",target:"H111"},
+      {source:"S9",target:"M1128"},{source:"S10",target:"J316"},{source:"S10",target:"R58"},
+      {source:"Grace",target:"J316"},{source:"Grace",target:"R58"},{source:"Faith",target:"H111"},
+      {source:"Restoration",target:"I613"},{source:"Provision",target:"P235"},{source:"Rest",target:"M1128"},
+      {source:"Identity",target:"E611"},{source:"Suffering",target:"C129"}
+    ]};
+
+    function gc(id){
+      return D.links.filter(function(l){
+        var s=typeof l.source==='object'?l.source.id:l.source;
+        var t=typeof l.target==='object'?l.target.id:l.target;
+        return s===id||t===id;
+      }).map(function(l){
+        var s=typeof l.source==='object'?l.source.id:l.source;
+        var t=typeof l.target==='object'?l.target.id:l.target;
+        return D.nodes.find(function(n){return n.id===(s===id?t:s)});
+      }).filter(Boolean);
+    }
+
+    var el=document.getElementById('gc');
+    var ar=true,rt,ag=0,OR=550;
+
+    var G=window.ForceGraph3D()(el)
+      .graphData(D)
+      .nodeColor(function(n){return n.color}).nodeVal(function(n){return n.val})
+      .nodeRelSize(5).nodeOpacity(.92).nodeLabel(function(){return ''})
+      .linkColor(function(){return 'rgba(212,168,83,0.08)'}).linkWidth(.8)
+      .linkDirectionalParticles(2).linkDirectionalParticleWidth(1.2)
+      .linkDirectionalParticleSpeed(.004)
+      .linkDirectionalParticleColor(function(){return 'rgba(212,168,83,0.5)'})
+      .backgroundColor('#0a0a12').enableNodeDrag(true).showNavInfo(false)
+      .onNodeHover(function(n){el.style.cursor=n?'pointer':'default'})
+      .onBackgroundClick(function(){document.getElementById('ip').style.display='none'})
+      .onNodeClick(function(nd){
+        ar=false;clearTimeout(rt);
+        var dd=Math.hypot(nd.x||0,nd.y||0,nd.z||0)||1;
+        G.cameraPosition({x:(nd.x||0)*(1+200/dd),y:(nd.y||0)*(1+200/dd),z:(nd.z||0)*(1+200/dd)},nd,1200);
+
+        var cn=gc(nd.id);
+        var tc={sermon:'ts',theme:'tt',verse:'tv',preacher:'tp',influencer:'ti'};
+        var h='<h3>'+nd.name+'</h3><span class="tb2 '+tc[nd.type]+'">'+nd.type+'</span>';
+
+        if(nd.type==='sermon'){
+          h+='<p><strong>Preacher:</strong> '+nd.preacher+'<br><strong>Date:</strong> '+nd.date+'</p>';
+          h+='<a href="'+nd.url+'" target="_blank" class="wl">&#9654; Watch Sermon</a>';
+          var th=cn.filter(function(n){return n.type==='theme'});
+          var vs=cn.filter(function(n){return n.type==='verse'});
+          if(th.length){h+='<p class="xl">Themes</p><ul>';th.forEach(function(t){h+='<li style="color:#c0b4e8">'+t.name+'</li>'});h+='</ul>'}
+          if(vs.length){h+='<p class="xl">Verses</p><ul>';vs.forEach(function(v){h+='<li style="color:var(--gold)">'+v.name+'</li>'});h+='</ul>'}
+        }else{
+          var sr=cn.filter(function(n){return n.type==='sermon'});
+          if(sr.length){h+='<p class="xl">Connected Sermons</p><ul>';sr.forEach(function(s){h+='<li><a href="'+s.url+'" target="_blank">'+s.name+'</a><br><span style="font-size:.72rem;color:rgba(245,239,224,.4)">'+s.preacher+' &middot; '+s.date+'</span></li>'});h+='</ul>'}
+          if(nd.type==='preacher'||nd.type==='influencer'){var tm=cn.filter(function(n){return n.type==='theme'});if(tm.length){h+='<p class="xl">Themes</p><ul>';tm.forEach(function(t){h+='<li style="color:#c0b4e8">'+t.name+'</li>'});h+='</ul>'}}
+        }
+        document.getElementById('ic').innerHTML=h;
+        document.getElementById('ip').style.display='block';
+        rt=setTimeout(function(){ar=true},15000);
+      });
+
+    G.nodeThreeObject(function(nd){
+      var g=new THREE.Group(),r=Math.cbrt(nd.val)*3;
+      g.add(new THREE.Mesh(new THREE.SphereGeometry(r,16,16),new THREE.MeshLambertMaterial({color:nd.color,transparent:true,opacity:.9})));
+      g.add(new THREE.Mesh(new THREE.SphereGeometry(r*1.5,16,16),new THREE.MeshBasicMaterial({color:nd.color,transparent:true,opacity:.08})));
+      if(nd.type==='theme'||nd.type==='verse'){
+        var c=document.createElement('canvas'),x=c.getContext('2d');c.width=256;c.height=64;x.clearRect(0,0,256,64);
+        x.font='600 22px Outfit,sans-serif';x.fillStyle=nd.type==='verse'?'#d4a853':'#c0b4e8';
+        x.textAlign='center';x.textBaseline='middle';x.fillText(nd.name,128,32);
+        var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,opacity:.8}));
+        sp.scale.set(28,7,1);sp.position.y=r+8;g.add(sp);
+      }
+      return g;
+    });
+
+    var sc=G.scene();sc.add(new THREE.AmbientLight(0x333344,1.5));
+    var a=new THREE.PointLight(0xd4a853,2,800);a.position.set(100,200,150);sc.add(a);
+    var b=new THREE.PointLight(0x5a3f9e,1.5,600);b.position.set(-150,-100,-100);sc.add(b);
+
+    setTimeout(function(){G.cameraPosition({x:0,y:60,z:550},null,0)},200);
+
+    !function o(){if(ar){ag+=.0006;G.cameraPosition({x:OR*Math.sin(ag),y:40+30*Math.sin(ag*.7),z:OR*Math.cos(ag)})}requestAnimationFrame(o)}();
+
+    el.addEventListener('mousedown',function(){ar=false;clearTimeout(rt)});
+    el.addEventListener('mouseup',function(){clearTimeout(rt);rt=setTimeout(function(){ar=true},8e3)});
+    el.addEventListener('wheel',function(){ar=false;clearTimeout(rt);rt=setTimeout(function(){ar=true},8e3)});
+    window.addEventListener('resize',function(){G.width(window.innerWidth).height(window.innerHeight)});
+  }
+})();
+</script>
+</body>
+</html>
