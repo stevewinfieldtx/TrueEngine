@@ -85,12 +85,35 @@
 
 <script>
 (function(){
-  function ls(u){return new Promise(function(ok,no){var s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+  // Load a script, trying multiple CDN sources with fallback
+  function tryLoad(urls){
+    var i=0;
+    return new Promise(function(ok,no){
+      function attempt(){
+        if(i>=urls.length){no(new Error('All CDNs failed'));return}
+        var s=document.createElement('script');
+        s.src=urls[i];
+        s.onload=ok;
+        s.onerror=function(){console.warn('CDN failed: '+urls[i]);i++;attempt()};
+        document.head.appendChild(s);
+      }
+      attempt();
+    });
+  }
 
-  ls('https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js').then(function(){
-    return ls('https://cdn.jsdelivr.net/npm/3d-force-graph@1.79.0/dist/3d-force-graph.min.js');
+  // Three.js: try unpkg first, then cdnjs, then jsdelivr
+  tryLoad([
+    'https://unpkg.com/three@0.168.0/build/three.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/three.js/r168/three.min.js',
+    'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js'
+  ]).then(function(){
+    // 3d-force-graph: try unpkg first, then jsdelivr
+    return tryLoad([
+      'https://unpkg.com/3d-force-graph@1.79.0/dist/3d-force-graph.min.js',
+      'https://cdn.jsdelivr.net/npm/3d-force-graph@1.79.0/dist/3d-force-graph.min.js'
+    ]);
   }).then(go).catch(function(e){
-    document.getElementById('gc').innerHTML='<div style="color:#d4a853;text-align:center;padding-top:40vh;font-size:1.2rem">Loading 3D engine&hellip; please refresh.</div>';
+    document.getElementById('gc').innerHTML='<div style="color:#d4a853;text-align:center;padding-top:40vh;font-size:1.2rem">Could not load 3D engine. Please check your connection and refresh.</div>';
   });
 
   function go(){
